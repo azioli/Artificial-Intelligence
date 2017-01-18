@@ -1,0 +1,215 @@
+Created by PLY version 3.9 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> FORMULA
+Rule 1     FORMULA -> LPAREN FORMULA IMPLIES FORMULA RPAREN
+Rule 2     FORMULA -> LPAREN FORMULA OR FORMULA RPAREN
+Rule 3     FORMULA -> LPAREN FORMULA AND FORMULA RPAREN
+Rule 4     FORMULA -> LPAREN NOT FORMULA RPAREN
+Rule 5     FORMULA -> PREDICATE
+
+Terminals, with rules where they appear
+
+AND                  : 3
+IMPLIES              : 1
+LPAREN               : 1 2 3 4
+NOT                  : 4
+OR                   : 2
+PREDICATE            : 5
+RPAREN               : 1 2 3 4
+error                : 
+
+Nonterminals, with rules where they appear
+
+FORMULA              : 1 1 2 2 3 3 4 0
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . FORMULA
+    (1) FORMULA -> . LPAREN FORMULA IMPLIES FORMULA RPAREN
+    (2) FORMULA -> . LPAREN FORMULA OR FORMULA RPAREN
+    (3) FORMULA -> . LPAREN FORMULA AND FORMULA RPAREN
+    (4) FORMULA -> . LPAREN NOT FORMULA RPAREN
+    (5) FORMULA -> . PREDICATE
+
+    LPAREN          shift and go to state 2
+    PREDICATE       shift and go to state 1
+
+    FORMULA                        shift and go to state 3
+
+state 1
+
+    (5) FORMULA -> PREDICATE .
+
+    RPAREN          reduce using rule 5 (FORMULA -> PREDICATE .)
+    IMPLIES         reduce using rule 5 (FORMULA -> PREDICATE .)
+    OR              reduce using rule 5 (FORMULA -> PREDICATE .)
+    AND             reduce using rule 5 (FORMULA -> PREDICATE .)
+    $end            reduce using rule 5 (FORMULA -> PREDICATE .)
+
+
+state 2
+
+    (1) FORMULA -> LPAREN . FORMULA IMPLIES FORMULA RPAREN
+    (2) FORMULA -> LPAREN . FORMULA OR FORMULA RPAREN
+    (3) FORMULA -> LPAREN . FORMULA AND FORMULA RPAREN
+    (4) FORMULA -> LPAREN . NOT FORMULA RPAREN
+    (1) FORMULA -> . LPAREN FORMULA IMPLIES FORMULA RPAREN
+    (2) FORMULA -> . LPAREN FORMULA OR FORMULA RPAREN
+    (3) FORMULA -> . LPAREN FORMULA AND FORMULA RPAREN
+    (4) FORMULA -> . LPAREN NOT FORMULA RPAREN
+    (5) FORMULA -> . PREDICATE
+
+    NOT             shift and go to state 4
+    LPAREN          shift and go to state 2
+    PREDICATE       shift and go to state 1
+
+    FORMULA                        shift and go to state 5
+
+state 3
+
+    (0) S' -> FORMULA .
+
+
+
+state 4
+
+    (4) FORMULA -> LPAREN NOT . FORMULA RPAREN
+    (1) FORMULA -> . LPAREN FORMULA IMPLIES FORMULA RPAREN
+    (2) FORMULA -> . LPAREN FORMULA OR FORMULA RPAREN
+    (3) FORMULA -> . LPAREN FORMULA AND FORMULA RPAREN
+    (4) FORMULA -> . LPAREN NOT FORMULA RPAREN
+    (5) FORMULA -> . PREDICATE
+
+    LPAREN          shift and go to state 2
+    PREDICATE       shift and go to state 1
+
+    FORMULA                        shift and go to state 6
+
+state 5
+
+    (1) FORMULA -> LPAREN FORMULA . IMPLIES FORMULA RPAREN
+    (2) FORMULA -> LPAREN FORMULA . OR FORMULA RPAREN
+    (3) FORMULA -> LPAREN FORMULA . AND FORMULA RPAREN
+
+    IMPLIES         shift and go to state 7
+    OR              shift and go to state 9
+    AND             shift and go to state 8
+
+
+state 6
+
+    (4) FORMULA -> LPAREN NOT FORMULA . RPAREN
+
+    RPAREN          shift and go to state 10
+
+
+state 7
+
+    (1) FORMULA -> LPAREN FORMULA IMPLIES . FORMULA RPAREN
+    (1) FORMULA -> . LPAREN FORMULA IMPLIES FORMULA RPAREN
+    (2) FORMULA -> . LPAREN FORMULA OR FORMULA RPAREN
+    (3) FORMULA -> . LPAREN FORMULA AND FORMULA RPAREN
+    (4) FORMULA -> . LPAREN NOT FORMULA RPAREN
+    (5) FORMULA -> . PREDICATE
+
+    LPAREN          shift and go to state 2
+    PREDICATE       shift and go to state 1
+
+    FORMULA                        shift and go to state 11
+
+state 8
+
+    (3) FORMULA -> LPAREN FORMULA AND . FORMULA RPAREN
+    (1) FORMULA -> . LPAREN FORMULA IMPLIES FORMULA RPAREN
+    (2) FORMULA -> . LPAREN FORMULA OR FORMULA RPAREN
+    (3) FORMULA -> . LPAREN FORMULA AND FORMULA RPAREN
+    (4) FORMULA -> . LPAREN NOT FORMULA RPAREN
+    (5) FORMULA -> . PREDICATE
+
+    LPAREN          shift and go to state 2
+    PREDICATE       shift and go to state 1
+
+    FORMULA                        shift and go to state 12
+
+state 9
+
+    (2) FORMULA -> LPAREN FORMULA OR . FORMULA RPAREN
+    (1) FORMULA -> . LPAREN FORMULA IMPLIES FORMULA RPAREN
+    (2) FORMULA -> . LPAREN FORMULA OR FORMULA RPAREN
+    (3) FORMULA -> . LPAREN FORMULA AND FORMULA RPAREN
+    (4) FORMULA -> . LPAREN NOT FORMULA RPAREN
+    (5) FORMULA -> . PREDICATE
+
+    LPAREN          shift and go to state 2
+    PREDICATE       shift and go to state 1
+
+    FORMULA                        shift and go to state 13
+
+state 10
+
+    (4) FORMULA -> LPAREN NOT FORMULA RPAREN .
+
+    RPAREN          reduce using rule 4 (FORMULA -> LPAREN NOT FORMULA RPAREN .)
+    IMPLIES         reduce using rule 4 (FORMULA -> LPAREN NOT FORMULA RPAREN .)
+    OR              reduce using rule 4 (FORMULA -> LPAREN NOT FORMULA RPAREN .)
+    AND             reduce using rule 4 (FORMULA -> LPAREN NOT FORMULA RPAREN .)
+    $end            reduce using rule 4 (FORMULA -> LPAREN NOT FORMULA RPAREN .)
+
+
+state 11
+
+    (1) FORMULA -> LPAREN FORMULA IMPLIES FORMULA . RPAREN
+
+    RPAREN          shift and go to state 14
+
+
+state 12
+
+    (3) FORMULA -> LPAREN FORMULA AND FORMULA . RPAREN
+
+    RPAREN          shift and go to state 15
+
+
+state 13
+
+    (2) FORMULA -> LPAREN FORMULA OR FORMULA . RPAREN
+
+    RPAREN          shift and go to state 16
+
+
+state 14
+
+    (1) FORMULA -> LPAREN FORMULA IMPLIES FORMULA RPAREN .
+
+    RPAREN          reduce using rule 1 (FORMULA -> LPAREN FORMULA IMPLIES FORMULA RPAREN .)
+    IMPLIES         reduce using rule 1 (FORMULA -> LPAREN FORMULA IMPLIES FORMULA RPAREN .)
+    OR              reduce using rule 1 (FORMULA -> LPAREN FORMULA IMPLIES FORMULA RPAREN .)
+    AND             reduce using rule 1 (FORMULA -> LPAREN FORMULA IMPLIES FORMULA RPAREN .)
+    $end            reduce using rule 1 (FORMULA -> LPAREN FORMULA IMPLIES FORMULA RPAREN .)
+
+
+state 15
+
+    (3) FORMULA -> LPAREN FORMULA AND FORMULA RPAREN .
+
+    RPAREN          reduce using rule 3 (FORMULA -> LPAREN FORMULA AND FORMULA RPAREN .)
+    IMPLIES         reduce using rule 3 (FORMULA -> LPAREN FORMULA AND FORMULA RPAREN .)
+    OR              reduce using rule 3 (FORMULA -> LPAREN FORMULA AND FORMULA RPAREN .)
+    AND             reduce using rule 3 (FORMULA -> LPAREN FORMULA AND FORMULA RPAREN .)
+    $end            reduce using rule 3 (FORMULA -> LPAREN FORMULA AND FORMULA RPAREN .)
+
+
+state 16
+
+    (2) FORMULA -> LPAREN FORMULA OR FORMULA RPAREN .
+
+    RPAREN          reduce using rule 2 (FORMULA -> LPAREN FORMULA OR FORMULA RPAREN .)
+    IMPLIES         reduce using rule 2 (FORMULA -> LPAREN FORMULA OR FORMULA RPAREN .)
+    OR              reduce using rule 2 (FORMULA -> LPAREN FORMULA OR FORMULA RPAREN .)
+    AND             reduce using rule 2 (FORMULA -> LPAREN FORMULA OR FORMULA RPAREN .)
+    $end            reduce using rule 2 (FORMULA -> LPAREN FORMULA OR FORMULA RPAREN .)
+
