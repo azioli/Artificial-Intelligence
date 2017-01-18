@@ -1,0 +1,277 @@
+#!/usr/bin/python3
+from collections import deque
+from collections import OrderedDict
+import sys
+class Node:
+    def __init__(self,_name):
+        self.id=0
+        self.name=_name
+        self.depth=0
+        self.path_cost=sys.maxsize 
+        self.parent=None
+        self.children=[]
+        self.dist={}
+        self.visited=False
+        self.f_score=sys.maxsize                       
+    def get_name(self):
+        return self.name
+    def get_children(self):
+        return self.children
+    def get_dist(self,child):
+        return self.dist[child]
+    def get_id(self):
+        return self.id  
+    def get_depth(self):
+        return self.depth
+    def get_path_cost(self):
+        return self.path_cost 
+    def get_parent(self):
+        return self.parent 
+    def add_child(self,child,_dist):
+        self.children.append(child)
+        self.dist[child.get_name()]=_dist
+    def set_id(self,_id):
+        self.id=_id
+    def set_depth(self,_depth):
+        self.depth=_depth
+    def set_path_cost(self,_path_cost):
+        self.path_cost=_path_cost   
+    def set_parent(self,_parent):
+        self.parent=_parent
+    def set_visited(self):
+        self.visited=True
+    def __str__(self):
+        return str(self.name) + '--->' + str([x.name for x in self.children])     
+    
+class Graph:
+    def __init__(self):
+        self.nodes = {}
+        self.num = 0
+    def __iter__(self):
+        return iter(self.nodes.values())    
+    def add_node(self, node):
+        self.num += 1
+        n = Node(node)
+        self.nodes[node] = n
+        return n
+    def get_node(self, n):
+        if n in self.nodes:
+            return self.nodes[n]
+        else:
+            return None     
+    def add_edge(self, a, b, cost):
+        if a not in self.nodes:
+            self.add_node(a)
+        if b not in self.nodes:
+            self.add_node(b)
+        self.nodes[a].add_child(self.nodes[b], cost)
+    def get_nodes(self):
+        return self.nodes.keys()
+         
+def BFS(g,start,goal): 
+    if(not g.get_nodes() or g.get_node(start) is None or g.get_node(goal) is None ):
+        return False    
+    q=deque()
+    n=g.get_node(start)
+    nid=1
+    n.set_id(nid)
+    n.set_path_cost(0)
+    q.append(n)
+    while True:
+        if not q:
+            return False
+        n=q.popleft()
+        n.set_visited()
+        if(n.get_name()==goal):
+            return True
+        children=n.get_children()
+        for v in children:
+            if (not v.visited) and (v not in q):
+                nid+=1
+                v.set_id(nid)
+                v.set_depth(n.get_depth()+1)
+                v.set_path_cost(n.get_path_cost()+1)
+                v.set_parent(n.get_name())
+                q.append(v)            
+
+def DFS(g,start,goal):
+    if(not g.get_nodes() or g.get_node(start) is None or g.get_node(goal) is None ):
+        return False   
+    q=deque()
+    n=g.get_node(start)
+    nid=1
+    n.set_id(nid)
+    n.set_path_cost(0)
+    q.appendleft(n)
+    while True:
+        if not q:
+            return False
+        n=q.popleft()
+        n.set_visited()
+        if(n.get_name()==goal):
+            return True
+        children=reversed(n.get_children())
+        for v in children:
+            if(not v.visited) and (v.get_path_cost()> n.get_path_cost()+1):
+                nid+=1
+                v.set_id(nid)
+                v.set_depth(n.get_depth()+1)
+                v.set_path_cost(n.get_path_cost()+1)
+                v.set_parent(n.get_name())
+                q.appendleft(v)
+                
+def UCS(g,start,goal):
+    if(not g.get_nodes() or g.get_node(start) is None or g.get_node(goal) is None ):
+        return False   
+    openq=OrderedDict()
+    closeq=OrderedDict()
+    n=g.get_node(start)
+    nid=1 
+    n.set_id(nid)
+    n.set_path_cost(0)
+    openq[start]=n.get_path_cost()
+    while True:
+        if not openq:
+            return False
+        curnode=openq.popitem(False)[0]    
+        if(curnode==goal):
+            return True
+        n=g.get_node(curnode)
+        closeq[curnode]=n.get_path_cost()
+        children=OrderedDict()
+        for v in n.get_children():
+            children[v]=n.get_dist(v.get_name())
+        children=OrderedDict(sorted(children.items(), key=lambda t: t[1]))
+        while children:                
+            child=children.popitem(False)[0]
+            state=child.get_name()
+            if (state not in openq) and (state not in closeq):
+                child.set_path_cost(n.get_path_cost()+n.get_dist(state))
+                child.set_parent(n.get_name())
+                openq[state]=child.get_path_cost()
+                openq.move_to_end(state)
+            elif state in openq:
+                if n.get_path_cost()+n.get_dist(state)< openq[state]:
+                    del openq[state]
+                    child.set_path_cost(n.get_path_cost()+n.get_dist(state))
+                    child.set_parent(n.get_name())
+                    openq[state]=child.get_path_cost()
+                    openq.move_to_end(state)
+            elif state in closeq:
+                if child.get_path_cost() < closeq[state]:
+                    del closeq[state]
+                    child.set_path_cost(n.get_path_cost()+n.get_dist(state))
+                    child.set_parent(n.get_name())
+                    openq[state]=child.get_path_cost()
+                    openq.move_to_end(state) 
+        #closeq[curnode]=n.get_path_cost()
+        openq=OrderedDict(sorted(openq.items(), key=lambda t: t[1])) 
+
+def A_star(g,sunday,start,goal):
+    if(not g.get_nodes() or g.get_node(start) is None or g.get_node(goal) is None ):
+        return False   
+    openq=OrderedDict()
+    closeq=OrderedDict()
+    n=g.get_node(start)
+    n.set_path_cost(0)
+    n.f_score=sunday[start]
+    openq[start]=n.f_score
+    openq=OrderedDict(sorted(openq.items(), key=lambda t: t[1]))
+    while openq:
+        curnode=openq.popitem(False)[0]
+        if(curnode==goal):
+            return True
+        n=g.get_node(curnode)
+        closeq[curnode]=n.f_score
+        children=n.get_children()
+        for child in children:
+            cname=child.get_name()
+            #print(curnode,cname,openq,closeq,file=flog)
+            temp_path_cost=n.get_path_cost()+n.get_dist(cname)
+            if cname in closeq:
+                if temp_path_cost>=child.get_path_cost():
+                    continue
+                else:
+                    child.set_path_cost(temp_path_cost)
+                    child.f_score=child.get_path_cost()+sunday[cname]
+                    child.set_parent(curnode)
+                    del closeq[cname]
+                    openq[cname]=child.f_score
+                    openq=OrderedDict(sorted(openq.items(), key=lambda t: t[1]))
+                    continue
+            elif cname not in openq:
+                child.set_path_cost(temp_path_cost)
+                child.f_score=child.get_path_cost()+sunday[cname]
+                child.set_parent(curnode)
+                openq[cname]=child.f_score
+                openq=OrderedDict(sorted(openq.items(), key=lambda t: t[1]))
+                continue
+            elif  temp_path_cost>=child.get_path_cost():
+                continue
+            else:
+                child.set_path_cost(temp_path_cost)
+                child.f_score=child.get_path_cost()+sunday[cname]
+                child.set_parent(curnode)
+                openq[cname]=child.f_score
+                openq=OrderedDict(sorted(openq.items(), key=lambda t: t[1]))
+                continue
+    return False        
+                 
+if __name__ == '__main__':
+    fo=open("input.txt","r+")
+    algo=fo.readline().strip()
+    start=fo.readline().strip()
+    goal=fo.readline().strip()
+    n=int(fo.readline()) 
+    g=Graph()
+    for i in range(n):
+        line=fo.readline().strip().split(" ")
+        a=line[0]
+        b=line[1]
+        if(algo == 'BFS' or algo=="DFS"):
+            c=1
+        else:
+            c=int(line[2])
+        g.add_edge(a, b, c)
+        
+    if(algo == 'A*'):
+        n=int(fo.readline())
+        sunday={} 
+        for i in range(n):
+            line=fo.readline().strip().split(" ")
+            a=line[0]
+            c=line[1]
+            sunday[a]=int(c)
+        for v in g.get_nodes():
+            if v not in sunday:
+                sunday[v]=sys.maxsize    
+                        
+    ret=True;
+    if(algo=="BFS"):
+        ret=BFS(g, start, goal)
+                
+    elif(algo=="DFS"):
+        ret=DFS(g, start, goal)
+        
+    elif(algo=="UCS"):
+        ret=UCS(g, start, goal)
+    elif(algo=="A*"):
+        ret=A_star(g, sunday, start, goal)
+    else:
+        ret=False
+    
+    fw=open('output.txt',"w")        
+    if(ret==False):
+        print("False")
+        print("False", file=fw)        
+    else:    
+        result=deque()
+        n=g.get_node(goal)
+        while(True):
+            result.appendleft(n)
+            if(n.get_parent() is None):
+                break
+            n=g.get_node(n.get_parent())
+        for v in result:
+            print(v.name, v.get_path_cost())
+            print(v.name, v.get_path_cost(),file=fw)             
