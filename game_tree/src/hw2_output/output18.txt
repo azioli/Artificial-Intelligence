@@ -1,0 +1,11 @@
+G6 Raid
+O.X.X..OOO
+X...X..OOO
+....XX...O
+....XX....
+.X....XXO.
+...X.XXXX.
+..X..O.XX.
+O.X..OOXX.
+O........X
+.O.....OOX
